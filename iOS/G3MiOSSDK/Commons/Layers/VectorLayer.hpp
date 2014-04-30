@@ -1,0 +1,58 @@
+//
+//  VectorLayer.hpp
+//  G3MiOSSDK
+//
+//  Created by fpulido on 30/04/14.
+//
+//
+
+#ifndef __G3MiOSSDK__VectorLayer__
+#define __G3MiOSSDK__VectorLayer__
+
+#include <iostream>
+#include "Layer.hpp"
+#include "TileImageContribution.hpp"
+
+class TimeInterval;
+class IDownloader;
+class IImageDownloadListener;
+
+class VectorLayer : public Layer {
+
+protected:
+    const long long _timeToCacheMS;
+    const bool      _readExpired;
+    
+    VectorLayer(const TimeInterval&               timeToCache,
+                const bool                        readExpired,
+                const LayerTilesRenderParameters* parameters,
+                const float                       transparency,
+                const LayerCondition*             condition);
+    
+    const TimeInterval getTimeToCache() const;
+    
+    bool getReadExpired() const {
+        return _readExpired;
+    }
+    
+    virtual const TileImageContribution* rawContribution(const Tile* tile) const = 0;
+    
+public:
+    bool isEquals(const Layer* that) const;
+    
+    TileImageProvider* createTileImageProvider(const G3MRenderContext* rc,
+                                               const LayerTilesRenderParameters* layerTilesRenderParameters) const;
+    
+    const TileImageContribution* contribution(const Tile* tile) const;
+    
+    long long requestImage(const Tile* tile,
+                           IDownloader* downloader,
+                           long long tileDownloadPriority,
+                           bool logDownloadActivity,
+                           IImageDownloadListener* listener,
+                           bool deleteListener) const;
+    
+    
+};
+
+#endif /* defined(__G3MiOSSDK__VectorLayer__) */
