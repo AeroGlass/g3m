@@ -10,5 +10,16 @@
 #define __G3MiOSSDK__SimpleVectorLayer__
 
 #include <iostream>
+#include "VectorLayer.hpp"
+
+class SimpleVectorLayer : public VectorLayer {
+    
+protected:
+    
+    
+    
+};
+
+
 
 #endif /* defined(__G3MiOSSDK__SimpleVectorLayer__) */

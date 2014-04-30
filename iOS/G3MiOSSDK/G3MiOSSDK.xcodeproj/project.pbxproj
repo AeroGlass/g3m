@@ -10,6 +10,7 @@
 		34DF51CA1910F21800EF9A7C /* VectorLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34DF51C81910F21800EF9A7C /* VectorLayer.cpp */; };
 		34DF51CD1910F61200EF9A7C /* TiledVectorLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34DF51CB1910F61200EF9A7C /* TiledVectorLayer.cpp */; };
 		34DF51D01910F69D00EF9A7C /* SimpleVectorLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34DF51CE1910F69D00EF9A7C /* SimpleVectorLayer.cpp */; };
+		34DF51D31911478B00EF9A7C /* VectorLayerTileImageProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34DF51D11911478B00EF9A7C /* VectorLayerTileImageProvider.cpp */; };
 		383BD37D1577EDC00012AC53 /* Logger_iOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 383BD37A1577EDC00012AC53 /* Logger_iOS.mm */; };
 		383BD3851577EDDB0012AC53 /* ES2Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 383BD3811577EDDB0012AC53 /* ES2Renderer.mm */; };
 		383BD3871577EDDB0012AC53 /* G3MWidget_iOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 383BD3831577EDDB0012AC53 /* G3MWidget_iOS.mm */; };
@@ -1057,6 +1058,8 @@
 		34DF51CC1910F61200EF9A7C /* TiledVectorLayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TiledVectorLayer.hpp; sourceTree = "<group>"; };
 		34DF51CE1910F69D00EF9A7C /* SimpleVectorLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleVectorLayer.cpp; sourceTree = "<group>"; };
 		34DF51CF1910F69D00EF9A7C /* SimpleVectorLayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SimpleVectorLayer.hpp; sourceTree = "<group>"; };
+		34DF51D11911478B00EF9A7C /* VectorLayerTileImageProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VectorLayerTileImageProvider.cpp; sourceTree = "<group>"; };
+		34DF51D21911478B00EF9A7C /* VectorLayerTileImageProvider.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VectorLayerTileImageProvider.hpp; sourceTree = "<group>"; };
 		382D4B92159DC26000FE9296 /* NullStorage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NullStorage.hpp; path = Commons/Downloader/NullStorage.hpp; sourceTree = "<group>"; };
 		382D4B95159DC26B00FE9296 /* IStorage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IStorage.hpp; path = Commons/Interfaces/IStorage.hpp; sourceTree = "<group>"; };
 		383BD3791577EDC00012AC53 /* Factory_iOS.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Factory_iOS.hpp; path = Specific/Derived/Factory_iOS.hpp; sourceTree = "<group>"; };
@@ -2118,6 +2121,8 @@
 				CFF9643C19082C570044F06D /* ChessboardTileImageProvider.hpp */,
 				CF47E0F31901D66F00410BB5 /* CanvasTileImageProvider.cpp */,
 				CF47E0F41901D66F00410BB5 /* CanvasTileImageProvider.hpp */,
+				34DF51D11911478B00EF9A7C /* VectorLayerTileImageProvider.cpp */,
+				34DF51D21911478B00EF9A7C /* VectorLayerTileImageProvider.hpp */,
 			);
 			name = Basic;
 			sourceTree = "<group>";
@@ -2890,6 +2895,7 @@
 				D89DA21A15FF6C32008CD5F5 /* Image_iOS.mm in Sources */,
 				CF0D9BB41601F46B00F28B7D /* ByteBuffer_iOS.cpp in Sources */,
 				A7EE001A1619D01900C77604 /* JSONObject.cpp in Sources */,
+				34DF51D31911478B00EF9A7C /* VectorLayerTileImageProvider.cpp in Sources */,
 				A7EE001C161B245600C77604 /* JSONBaseObject.cpp in Sources */,
 				CF4F784A1804ADFC00550409 /* DeviceInfo_iOS.mm in Sources */,
 				CF9F74DF18805470008D65F7 /* CanvasImageBuilder.cpp in Sources */,
