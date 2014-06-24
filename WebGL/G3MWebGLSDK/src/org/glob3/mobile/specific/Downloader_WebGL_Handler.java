@@ -15,13 +15,15 @@ public interface Downloader_WebGL_Handler {
    public void init(final URL url,
                     final IBufferDownloadListener bufferListener,
                     final long priority,
-                    final long requestId);
+                    final long requestId,
+                    final boolean corsEnabled);
 
 
    public void init(final URL url,
                     final IImageDownloadListener imageListener,
                     final long priority,
-                    final long requestId);
+                    final long requestId,
+                    final boolean corsEnabled);
 
 
    public boolean isRequestingImage();

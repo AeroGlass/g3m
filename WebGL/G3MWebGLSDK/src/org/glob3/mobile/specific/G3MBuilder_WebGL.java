@@ -105,7 +105,8 @@ public class G3MBuilder_WebGL
    @Override
    protected IDownloader createDefaultDownloader() {
       final int delayMillis = 10;
-      final IDownloader downloader = new Downloader_WebGL(8, delayMillis, "");
+      // enable CORS request by default
+      final IDownloader downloader = new Downloader_WebGL(8, delayMillis, "", true);
 
       return downloader;
    }

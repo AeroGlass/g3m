@@ -30,14 +30,29 @@ public final class Downloader_WebGL
 
    private final String                             _proxy;
 
+   /**
+    * Downloader will initiate <a href="http://www.html5rocks.com/en/tutorials/cors/">CORS requests</a>
+    * when this flag is enabled. It is turned of by default.
+    * 
+    * Note proxy value is ignored when CORS is active.
+    */
+   private final boolean                            _enableCors;
+   
    private long                                     _requestIdCounter;
    private long                                     _requestsCounter;
    private long                                     _cancelsCounter;
 
+   public Downloader_WebGL(final int maxConcurrentOperationCount,
+           final int delayMillis,
+           final String proxy) {
+	   this(maxConcurrentOperationCount, delayMillis, proxy, false);
+   }
+
 
    public Downloader_WebGL(final int maxConcurrentOperationCount,
                            final int delayMillis,
-                           final String proxy) {
+                           final String proxy,
+                           final boolean enableCors) {
       _maxConcurrentOperationCount = maxConcurrentOperationCount;
       _requestIdCounter = 1;
       _requestsCounter = 0;
@@ -45,7 +60,8 @@ public final class Downloader_WebGL
       _downloadingHandlers = new HashMap<URL, Downloader_WebGL_Handler>();
       _queuedHandlers = new HashMap<URL, Downloader_WebGL_Handler>();
       _delayMillis = delayMillis;
-
+      _enableCors = enableCors;
+      
       if (proxy == null) {
          _proxy = null;
       }
@@ -148,7 +164,7 @@ public final class Downloader_WebGL
                              final boolean deleteListener) {
       final long requestId;
       Downloader_WebGL_Handler handler = null;
-      final URL proxyUrl = getProxiedURL(url);
+      final URL proxyUrl = _enableCors ? url : getProxiedURL(url);
 
       _requestsCounter++;
       requestId = _requestIdCounter++;
@@ -168,7 +184,7 @@ public final class Downloader_WebGL
             // new handler, queue it
             //            handler = new Downloader_WebGL_HandlerImpl(proxyUrl, listener, priority, requestId);
             handler = GWT.create(Downloader_WebGL_Handler.class);
-            handler.init(proxyUrl, listener, priority, requestId);
+            handler.init(proxyUrl, listener, priority, requestId, _enableCors);
             _queuedHandlers.put(proxyUrl, handler);
          }
       }
@@ -202,7 +218,7 @@ public final class Downloader_WebGL
                             final boolean deleteListener) {
       final long requestId;
       Downloader_WebGL_Handler handler = null;
-      final URL proxyUrl = getProxiedURL(url);
+      final URL proxyUrl = _enableCors ? url : getProxiedURL(url);
 
       _requestsCounter++;
       requestId = _requestIdCounter++;
@@ -222,7 +238,7 @@ public final class Downloader_WebGL
             // new handler, queue it
             //            handler = new Downloader_WebGL_HandlerImpl(proxyUrl, listener, priority, requestId);
             handler = GWT.create(Downloader_WebGL_Handler.class);
-            handler.init(proxyUrl, listener, priority, requestId);
+            handler.init(proxyUrl, listener, priority, requestId, _enableCors);
             _queuedHandlers.put(proxyUrl, handler);
          }
       }

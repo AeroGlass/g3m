@@ -23,6 +23,7 @@ public class Downloader_WebGL_Handler_DefaultImpl
    private final static String      TAG = "Downloader_WebGL_HandlerImpl";
 
    private long                     _priority;
+   private boolean					_corsEnabled = false;
    private URL                      _url;
    private ArrayList<ListenerEntry> _listeners;
    private boolean                  _requestingImage;
@@ -38,8 +39,10 @@ public class Downloader_WebGL_Handler_DefaultImpl
    final public void init(final URL url,
                           final IBufferDownloadListener bufferListener,
                           final long priority,
-                          final long requestId) {
+                          final long requestId,
+                          final boolean corsEnabled) {
       _priority = priority;
+      _corsEnabled = corsEnabled;
       _url = url;
       _listeners = new ArrayList<ListenerEntry>();
       final ListenerEntry entry = new ListenerEntry(bufferListener, null, requestId);
@@ -52,8 +55,10 @@ public class Downloader_WebGL_Handler_DefaultImpl
    final public void init(final URL url,
                           final IImageDownloadListener imageListener,
                           final long priority,
-                          final long requestId) {
+                          final long requestId,
+                          final boolean corsEnabled) {
       _priority = priority;
+      _corsEnabled = corsEnabled;
       _url = url;
       _listeners = new ArrayList<ListenerEntry>();
       final ListenerEntry entry = new ListenerEntry(null, imageListener, requestId);
@@ -156,7 +161,11 @@ public class Downloader_WebGL_Handler_DefaultImpl
 
       _dl = (Downloader_WebGL) downloader;
 
-      jsRequest(_url.getPath());
+      if (_corsEnabled) {
+    	  jsCorsRequest(_url.getPath());
+      } else {
+    	  jsRequest(_url.getPath());
+      }
 
       //      IThreadUtils.instance().invokeInRendererThread(new ProcessResponseGTask(statusCode, data, this), true);
    }
@@ -196,7 +205,70 @@ public class Downloader_WebGL_Handler_DefaultImpl
       }
    }
 
+   
+   public native void jsCorsRequest(String url) /*-{
+	function createCORSRequest(method, url) {
+		var xhr = new XMLHttpRequest();
+		if ("withCredentials" in xhr) {
 
+			// Check if the XMLHttpRequest object has a "withCredentials" property.
+			// "withCredentials" only exists on XMLHTTPRequest2 objects.
+			xhr.open(method, url, true);
+
+		} else if (typeof XDomainRequest != "undefined") {
+
+			// Otherwise, check if XDomainRequest.
+			// XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+			xhr = new XDomainRequest();
+			xhr.open(method, url);
+
+		} else {
+
+			// Otherwise, CORS is not supported by the browser.
+			xhr = null;
+
+		}
+		return xhr;
+	}
+
+	var that = this;
+	var xhr = createCORSRequest('GET', url);
+	if (!xhr) {
+		console.log("CORS Not Supported!");
+		that.@org.glob3.mobile.specific.Downloader_WebGL_Handler::processResponse(ILcom/google/gwt/core/client/JavaScriptObject;)(0, null);
+	}
+
+	// --- //
+
+	xhr.responseType = (that.@org.glob3.mobile.specific.Downloader_WebGL_Handler_DefaultImpl::_requestingImage) ? "blob"
+			: "arraybuffer";
+	//xhr.setRequestHeader("Cache-Control", "max-age=31536000");
+	xhr.onload = function() {
+		if (xhr.readyState == 4) {
+			// inform downloader to remove myself, to avoid adding new Listener
+			that.@org.glob3.mobile.specific.Downloader_WebGL_Handler::removeFromDownloaderDownloadingHandlers()();
+			if (xhr.status === 200) {
+				if (that.@org.glob3.mobile.specific.Downloader_WebGL_Handler_DefaultImpl::_requestingImage) {
+					that.@org.glob3.mobile.specific.Downloader_WebGL_Handler_DefaultImpl::jsCreateImageFromBlob(ILcom/google/gwt/core/client/JavaScriptObject;)(xhr.status, xhr.response);
+				} else {
+					that.@org.glob3.mobile.specific.Downloader_WebGL_Handler::processResponse(ILcom/google/gwt/core/client/JavaScriptObject;)(xhr.status, xhr.response);
+				}
+			} else {
+				console.log("Error Retrieving Data!");
+				that.@org.glob3.mobile.specific.Downloader_WebGL_Handler::processResponse(ILcom/google/gwt/core/client/JavaScriptObject;)(xhr.status, null);
+			}
+		}
+	};
+	// XmlHttpRequest2 specific error handler
+	xhr.onerror = function() {
+		console.log('There was an error!');
+		that.@org.glob3.mobile.specific.Downloader_WebGL_Handler::processResponse(ILcom/google/gwt/core/client/JavaScriptObject;)(0, null);
+	};
+	xhr.send();
+
+}-*/;
+   
+   
    @Override
    public native void jsRequest(String url) /*-{
 		//		debugger;
