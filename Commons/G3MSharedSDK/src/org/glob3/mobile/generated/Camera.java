@@ -22,8 +22,8 @@ public class Camera
      _geodeticPosition = (that._geodeticPosition == null) ? null: new Geodetic3D(that._geodeticPosition);
      _angle2Horizon = that._angle2Horizon;
      _normalizedPosition = new MutableVector3D(that._normalizedPosition);
-     _tanHalfVerticalFieldOfView = java.lang.Double.NaN;
-     _tanHalfHorizontalFieldOfView = java.lang.Double.NaN;
+     _tanHalfVerticalFieldOfView = that._tanHalfVerticalFieldOfView;
+     _tanHalfHorizontalFieldOfView = that._tanHalfHorizontalFieldOfView;
      _rollInRadians = that._rollInRadians;
   }
 
