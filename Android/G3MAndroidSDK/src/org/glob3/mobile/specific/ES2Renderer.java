@@ -7,6 +7,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.glob3.mobile.generated.G3MWidget;
 import org.glob3.mobile.generated.GL;
+import org.glob3.mobile.generated.ILogger;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -62,29 +63,31 @@ public final class ES2Renderer
       final G3MWidget widget = _widgetAndroid.getG3MWidget();
       widget.render(_width, _height);
 
-      // experimental FPS reduction - DGD
-      final long now = System.currentTimeMillis();
-      final long timeElapsedInRender = now - _startTime;
-      final long timeLeftInMS = GOAL_MS_PER_FRAME - timeElapsedInRender;
-      if (timeLeftInMS > 0) {
-         //         System.gc();
-         //
-         //         timeElapsedInRender = System.currentTimeMillis() - _startTime;
-         //         timeLeftInMS = GOAL_MS_PER_FRAME - timeElapsedInRender;
-         //         if (timeLeftInMS > 0) {
-         try {
-            //ILogger.instance().logInfo("**** sleeping OpenGL thread for " + timeLeftInMS + "ms");
-            Thread.sleep(timeLeftInMS);
-         }
-         catch (final InterruptedException e) {
-         }
-         //         }
-         _startTime = System.currentTimeMillis();
+      if (!_widgetAndroid.getNoFPSReduction())
+      {
+        // experimental FPS reduction - DGD
+        final long now = System.currentTimeMillis();
+        final long timeElapsedInRender = now - _startTime;
+        final long timeLeftInMS = GOAL_MS_PER_FRAME - timeElapsedInRender;
+        if (timeLeftInMS > 0) {
+            //         System.gc();
+            //
+            //         timeElapsedInRender = System.currentTimeMillis() - _startTime;
+            //         timeLeftInMS = GOAL_MS_PER_FRAME - timeElapsedInRender;
+            //         if (timeLeftInMS > 0) {
+            try {
+//                ILogger.instance().logInfo("**** sleeping OpenGL thread for " + timeLeftInMS + "ms");
+                Thread.sleep(timeLeftInMS);
+            }
+            catch (final InterruptedException e) {
+            }
+            //         }
+            _startTime = System.currentTimeMillis();
+        }
+        else {
+            _startTime = now;
+        }
       }
-      else {
-         _startTime = now;
-      }
-
    }
 
 

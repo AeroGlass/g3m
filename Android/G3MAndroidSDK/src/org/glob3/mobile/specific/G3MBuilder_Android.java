@@ -19,13 +19,15 @@ public class G3MBuilder_Android
 
    private final G3MWidget_Android _nativeWidget;
 
-
    public G3MBuilder_Android(final Context context) {
-      super();
-
-      _nativeWidget = new G3MWidget_Android(context);
+       this(context, false);
    }
 
+   public G3MBuilder_Android(final Context context,final boolean noFPSReduction) {
+       super();
+
+       _nativeWidget = new G3MWidget_Android(context, noFPSReduction);
+   }
 
    public G3MWidget_Android createWidget() {
       //Adding Default Program Sources
@@ -91,6 +93,5 @@ public class G3MBuilder_Android
                getStorage(), //
                saveInBackground);
    }
-
 
 }

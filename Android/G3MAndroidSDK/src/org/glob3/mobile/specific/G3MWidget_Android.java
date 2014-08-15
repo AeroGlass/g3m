@@ -61,10 +61,16 @@ public final class G3MWidget_Android
    private final OnDoubleTapListener  _doubleTapListener;
    private final GestureDetector      _gestureDetector;
    private Thread                     _openGLThread         = null;
-
+   private boolean                    _noFPSReduction;
 
    public G3MWidget_Android(final android.content.Context context) {
+       this(context, false);
+
+   }
+ 
+   public G3MWidget_Android(final android.content.Context context,final boolean noFPSReduction) {
       this(context, null);
+      _noFPSReduction = noFPSReduction;
    }
 
 
@@ -454,5 +460,10 @@ public final class G3MWidget_Android
       return getG3MWidget().getG3MContext();
    }
 
+   
+   public boolean getNoFPSReduction()
+   {
+       return _noFPSReduction;
+   }
 
 }
