@@ -678,9 +678,9 @@ public class PlanetRenderer extends DefaultRenderer implements ChangedListener, 
     _firstRender = false;
   }
 
-  public final void onPause(G3MContext context)
+  public final void onResume(G3MContext context)
   {
-    recreateTiles();
+    changed();
   }
 
   public final void setEnable(boolean enable)
