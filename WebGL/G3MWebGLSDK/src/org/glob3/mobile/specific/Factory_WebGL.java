@@ -26,6 +26,7 @@ public final class Factory_WebGL
 
    boolean first = true;
 
+   private final float[] _cameraOffset = new float[4];
 
    @Override
    public ITimer createTimer() {
@@ -137,8 +138,21 @@ public final class Factory_WebGL
       return new FloatBuffer_WebGL(array, length);
    }
 
+    @Override
+    public float[] getCameraOffset() {
+        return _cameraOffset;
+    }
 
-   @Override
+    @Override
+    public void setCameraOffset(float x, float y, float z, float w) {
+        _cameraOffset[0] = x;
+        _cameraOffset[1] = y;
+        _cameraOffset[2] = z;
+        _cameraOffset[3] = w;
+    }
+
+
+    @Override
    protected IDeviceInfo createDeviceInfo() {
       return new DeviceInfo_WebGL();
    }

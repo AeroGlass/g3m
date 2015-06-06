@@ -2,6 +2,8 @@
 
 package org.glob3.mobile.specific;
 
+import android.content.Context;
+
 import org.glob3.mobile.generated.IByteBuffer;
 import org.glob3.mobile.generated.ICanvas;
 import org.glob3.mobile.generated.IDeviceInfo;
@@ -14,8 +16,6 @@ import org.glob3.mobile.generated.IWebSocket;
 import org.glob3.mobile.generated.IWebSocketListener;
 import org.glob3.mobile.generated.URL;
 
-import android.content.Context;
-
 
 public final class Factory_Android
          extends
@@ -23,6 +23,7 @@ public final class Factory_Android
 
 
    private final Context _context;
+   private final float[] _cameraOffset = new float[4];
 
 
    public Factory_Android(final Context context) {
@@ -126,8 +127,20 @@ public final class Factory_Android
       return new FloatBuffer_Android(array, length);
    }
 
+    @Override
+    public float[] getCameraOffset() {
+        return _cameraOffset;
+    }
 
-   @Override
+    public void setCameraOffset(float x,float y, float z,float w) {
+        _cameraOffset[0] = x;
+        _cameraOffset[1] = y;
+        _cameraOffset[2] = z;
+        _cameraOffset[3] = w;
+    }
+
+
+    @Override
    protected IDeviceInfo createDeviceInfo() {
       return new DeviceInfo_Android(_context);
    }

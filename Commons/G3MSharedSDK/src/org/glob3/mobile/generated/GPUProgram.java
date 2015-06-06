@@ -20,6 +20,8 @@ public class GPUProgram
 
   private int _nReferences; //Number of items that reference this Program
 
+  private GPUUniform _globalPositionOffset;
+
   private boolean compileShader(GL gl, int shader, String source)
   {
     boolean result = gl.compileShader(shader, source);
@@ -83,6 +85,10 @@ public class GPUProgram
       GPUUniform u = gl.getActiveUniform(this, i);
       if (u != null)
       {
+        if (u._name.equalsIgnoreCase("uCameraOffset")) {
+          _globalPositionOffset = u;
+          continue;
+        }
         _uniforms[u.getIndex()] = u;
   
         final int code = GPUVariable.getUniformCode(u._key);
@@ -126,6 +132,7 @@ public class GPUProgram
      _attributesCode = 0;
      _gl = null;
      _nReferences = 0;
+     _globalPositionOffset = null;
   }
 
 //C++ TO JAVA CONVERTER TODO TASK: The implementation of the following method could not be found:
@@ -156,7 +163,11 @@ public class GPUProgram
   
     _createdAttributes = null;
     _createdUniforms = null;
-  
+
+    if (_globalPositionOffset != null) {
+      _globalPositionOffset.dispose();
+    }
+
     if (!_gl.deleteProgram(this))
     {
       ILogger.instance().logError("GPUProgram: Problem encountered while deleting program.");
@@ -406,6 +417,18 @@ public class GPUProgram
       {
         uniform.applyChanges(gl);
       }
+    }
+    if (_globalPositionOffset != null) {
+      float[] currCameraOffset = IFactory.instance().getCameraOffset();
+      if (currCameraOffset == null) {
+        currCameraOffset = new float[4];
+      }
+
+      _globalPositionOffset.set(new GPUUniformValueVec4Float(currCameraOffset[0],
+                                                             currCameraOffset[1],
+                                                             currCameraOffset[2],
+                                                             currCameraOffset[3]));
+      _globalPositionOffset.applyChanges(gl);
     }
   
     for (int i = 0; i < _nAttributes; i++)
