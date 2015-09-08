@@ -68,3 +68,17 @@ WebGL/G3MWebGLTestingApplication/war/WEB-INF/deploy/
 
 
 *.xccheckout
+
+# Android-studio
+local.properties
+*.apk
+*.ap_
+*.dex
+*.class
+*.iml
+.idea
+
+# Generated
+gradle-app.setting
+build
+*/build
