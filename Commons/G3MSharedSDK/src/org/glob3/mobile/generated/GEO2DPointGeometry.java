@@ -48,4 +48,14 @@ public class GEO2DPointGeometry extends GEOGeometry2D
     return 1;
   }
 
+  public final GEO2DPointGeometry deepCopy()
+  {
+    return new GEO2DPointGeometry(_position);
+  }
+
+  public final long createFeatureMarks(VectorStreamingRenderer.VectorSet vectorSet, VectorStreamingRenderer.Node node)
+  {
+    return vectorSet.createFeatureMark(node, this);
+  }
+
 }

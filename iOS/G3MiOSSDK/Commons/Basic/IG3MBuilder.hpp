@@ -23,7 +23,6 @@ class PeriodicalTask;
 class G3MWidget;
 class PlanetRendererBuilder;
 class Planet;
-//TODO
 class Renderer;
 class ProtoRenderer;
 class WidgetUserData;
@@ -71,8 +70,6 @@ private:
   InfoDisplay*                      _infoDisplay;
 
   GL*                               getGL();
-  IDownloader*                      getDownloader();
-  IThreadUtils*                     getThreadUtils();
   ICameraActivityListener*          getCameraActivityListener();
   std::vector<ICameraConstrainer*>* getCameraConstraints();
   CameraRenderer*                   getCameraRenderer();
@@ -117,6 +114,9 @@ public:
   IG3MBuilder();
 
   virtual ~IG3MBuilder();
+
+  IDownloader*                      getDownloader();
+  IThreadUtils*                     getThreadUtils();
 
   void setGL(GL* gl);
 
@@ -184,23 +184,23 @@ public:
   void setShownSector(const Sector& sector);
 
   GEORenderer* createGEORenderer(GEOSymbolizer* symbolizer) {
-    const bool createMeshRenderer      = true;
-    const bool createShapesRenderer    = true;
-    const bool createMarksRenderer     = true;
-    const bool createGEOTileRasterizer = true;
+    const bool createMeshRenderer   = true;
+    const bool createShapesRenderer = true;
+    const bool createMarksRenderer  = true;
+    const bool createGEOVectorLayer = true;
 
     return createGEORenderer(symbolizer,
                              createMeshRenderer,
                              createShapesRenderer,
                              createMarksRenderer,
-                             createGEOTileRasterizer);
+                             createGEOVectorLayer);
   }
 
   GEORenderer* createGEORenderer(GEOSymbolizer* symbolizer,
                                  bool createMeshRenderer,
                                  bool createShapesRenderer,
                                  bool createMarksRenderer,
-                                 bool createGEOTileRasterizer);
+                                 bool createGEOVectorLayer);
 
   MeshRenderer* createMeshRenderer();
 
@@ -209,7 +209,6 @@ public:
   MarksRenderer* createMarksRenderer();
   
   void setInfoDisplay(InfoDisplay* infoDisplay);
-  
 };
 
 #endif

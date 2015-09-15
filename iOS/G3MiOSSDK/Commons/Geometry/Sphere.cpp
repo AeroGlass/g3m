@@ -15,6 +15,71 @@
 #include "FloatBufferBuilderFromCartesian3D.hpp"
 
 
+Sphere* Sphere::enclosingSphere(const std::vector<Vector3D>& points) {
+  if (points.size() < 2) {
+    return NULL;
+  }
+
+  const Vector3D first = points[0];
+
+  MutableVector3D xmin(first);
+  MutableVector3D xmax(first);
+  MutableVector3D ymin(first);
+  MutableVector3D ymax(first);
+  MutableVector3D zmin(first);
+  MutableVector3D zmax(first);
+
+  for (int i = 1; i < points.size(); i++) {
+    const Vector3D p = points[i];
+    if (p._x < xmin.x()) xmin.copyFrom(p);
+    if (p._x > xmax.x()) xmax.copyFrom(p);
+    if (p._y < ymin.y()) ymin.copyFrom(p);
+    if (p._y > ymax.y()) ymax.copyFrom(p);
+    if (p._z < zmin.z()) zmin.copyFrom(p);
+    if (p._z > zmax.z()) zmax.copyFrom(p);
+  }
+
+  double xSpan = xmax.squaredDistanceTo(xmin);
+  double ySpan = ymax.squaredDistanceTo(ymin);
+  double zSpan = zmax.squaredDistanceTo(zmin);
+  MutableVector3D dia1(xmin);
+  MutableVector3D dia2(xmax);
+  double maxSpan = xSpan;
+  if (ySpan > maxSpan) {
+    maxSpan = ySpan;
+    dia1.copyFrom(ymin);
+    dia2.copyFrom(ymax);
+  }
+  if (zSpan > maxSpan) {
+    dia1.copyFrom(zmin);
+    dia2.copyFrom(zmax);
+  }
+
+  MutableVector3D center((dia1.x() + dia2.x()) / 2,
+                         (dia1.y() + dia2.y()) / 2,
+                         (dia1.z() + dia2.z()) / 2);
+
+  double sqRad = dia2.squaredDistanceTo(center);
+  double radius = IMathUtils::instance()->sqrt(sqRad);
+  for (int i = 0; i < points.size(); i++) {
+    const Vector3D p = points[i];
+    double d = center.squaredDistanceTo(p);
+    if (d > sqRad) {
+      double r = IMathUtils::instance()->sqrt(d);
+      radius = (radius + r) * 0.5f;
+      sqRad = radius * radius;
+      double offset = r - radius;
+      //center = (radius * center + offset * p) / r;
+      center.set((radius * center.x() + offset * p._x) / r,
+                 (radius * center.y() + offset * p._y) / r,
+                 (radius * center.z() + offset * p._z) / r);
+    }
+  }
+
+  return new Sphere(center.asVector3D(), radius);
+}
+
+
 double Sphere::projectedArea(const G3MRenderContext* rc) const {
   return rc->getCurrentCamera()->getProjectedSphereArea(*this);
 }
@@ -24,9 +89,9 @@ double Sphere::projectedArea(const G3MRenderContext* rc) const {
 //  return Vector2I::zero();
 //}
 
-void Sphere::createWireframeMesh(Color* color,
-                                 short resolution) const {
-  IMathUtils* mu = IMathUtils::instance();
+Mesh* Sphere::createWireframeMesh(const Color& color,
+                                  short resolution) const {
+  const IMathUtils* mu = IMathUtils::instance();
   const double delta = PI / (resolution-1);
 
   // create vertices
@@ -65,25 +130,28 @@ void Sphere::createWireframeMesh(Color* color,
     indices.add((short) (j));
   }
 
-  _mesh = new IndexedMesh(GLPrimitive::lines(),
-                          true,
-                          vertices->getCenter(),
-                          vertices->create(),
-                          indices.create(),
-                          1,
-                          1,
-                          color);
+  Mesh* mesh = new IndexedMesh(GLPrimitive::lines(),
+                               true,
+                               vertices->getCenter(),
+                               vertices->create(),
+                               indices.create(),
+                               1,
+                               1,
+                               new Color(color));
 
   delete vertices;
+
+  return mesh;
 }
 
 
 void Sphere::render(const G3MRenderContext* rc,
-                    const GLState& parentState) const {
+                    const GLState* parentState,
+                    const Color& color) const {
   if (_mesh == NULL) {
-    createWireframeMesh(Color::newFromRGBA(1.0f, 1.0f, 0.0f, 1.0f), (short) 16);
+    _mesh = createWireframeMesh(color, (short) 16);
   }
-  _mesh->render(rc, &parentState);
+  _mesh->render(rc, parentState);
 }
 
 

@@ -62,7 +62,7 @@ MultiTextureMapping::~MultiTextureMapping() {
 #endif
 }
 
-void MultiTextureMapping::modifyGLState(GLState& state) const{
+void MultiTextureMapping::modifyGLState(GLState& state) const {
   GLFeatureSet* tglfs = state.getGLFeatures(GLF_TEXTURE);
 
   for (int i = 0; i < tglfs->size(); i++) {
@@ -93,7 +93,7 @@ void MultiTextureMapping::modifyGLState(GLState& state) const{
                                             false,
                                             0,
                                             _transparent,
-                                            GLBlendFactor::srcAlpha(),
+                                            _glTextureId->isPremultiplied() ? GLBlendFactor::one() : GLBlendFactor::srcAlpha(),
                                             GLBlendFactor::oneMinusSrcAlpha(),
                                             _translationU,
                                             _translationV,
@@ -118,7 +118,7 @@ void MultiTextureMapping::modifyGLState(GLState& state) const{
                                             false,
                                             0,
                                             _transparent2,
-                                            GLBlendFactor::srcAlpha(),
+                                            _glTextureId->isPremultiplied() ? GLBlendFactor::one() : GLBlendFactor::srcAlpha(),
                                             GLBlendFactor::oneMinusSrcAlpha(),
                                             1), //TARGET
                        false);

@@ -48,22 +48,23 @@ public final class Downloader_Android_Handler {
 
    Downloader_Android_Handler(final URL url,
                               final IBufferDownloadListener listener,
+                              final boolean deleteListener,
                               final long priority,
                               final long requestId) {
       _priority = priority;
       _g3mURL = url;
       _hasImageListeners = false;
       try {
-         _javaURL = new java.net.URL(url.getPath());
+         _javaURL = new java.net.URL(url._path);
 
-         _listeners.add(new Downloader_Android_ListenerEntry(listener, null, requestId));
+         _listeners.add(new Downloader_Android_ListenerEntry(listener, null, deleteListener, requestId));
       }
       catch (final MalformedURLException e) {
          if (ILogger.instance() != null) {
-            ILogger.instance().logError(TAG + " MalformedURLException url=\"" + _g3mURL.getPath() + "\"");
+            ILogger.instance().logError(TAG + " MalformedURLException url=\"" + _g3mURL._path + "\"");
          }
          else {
-            Log.e(TAG, "MalformedURLException url=\"" + _g3mURL.getPath() + "\"");
+            Log.e(TAG, "MalformedURLException url=\"" + _g3mURL._path + "\"");
          }
          e.printStackTrace();
 
@@ -75,22 +76,23 @@ public final class Downloader_Android_Handler {
 
    Downloader_Android_Handler(final URL url,
                               final IImageDownloadListener listener,
+                              final boolean deleteListener,
                               final long priority,
                               final long requestId) {
       _priority = priority;
       _g3mURL = url;
       _hasImageListeners = true;
       try {
-         _javaURL = new java.net.URL(url.getPath());
+         _javaURL = new java.net.URL(url._path);
 
-         _listeners.add(new Downloader_Android_ListenerEntry(null, listener, requestId));
+         _listeners.add(new Downloader_Android_ListenerEntry(null, listener, deleteListener, requestId));
       }
       catch (final MalformedURLException e) {
          if (ILogger.instance() != null) {
-            ILogger.instance().logError(TAG + " MalformedURLException url=\"" + _g3mURL.getPath() + "\"");
+            ILogger.instance().logError(TAG + " MalformedURLException url=\"" + _g3mURL._path + "\"");
          }
          else {
-            Log.e(TAG, "MalformedURLException url=" + _g3mURL.getPath());
+            Log.e(TAG, "MalformedURLException url=" + _g3mURL._path);
          }
          e.printStackTrace();
 
@@ -101,9 +103,11 @@ public final class Downloader_Android_Handler {
 
 
    void addListener(final IBufferDownloadListener listener,
+                    final boolean deleteListener,
                     final long priority,
                     final long requestId) {
-      final Downloader_Android_ListenerEntry entry = new Downloader_Android_ListenerEntry(listener, null, requestId);
+      final Downloader_Android_ListenerEntry entry = new Downloader_Android_ListenerEntry(listener, null, deleteListener,
+               requestId);
 
       synchronized (this) {
          _listeners.add(entry);
@@ -116,9 +120,11 @@ public final class Downloader_Android_Handler {
 
 
    void addListener(final IImageDownloadListener listener,
+                    final boolean deleteListener,
                     final long priority,
                     final long requestId) {
-      final Downloader_Android_ListenerEntry entry = new Downloader_Android_ListenerEntry(null, listener, requestId);
+      final Downloader_Android_ListenerEntry entry = new Downloader_Android_ListenerEntry(null, listener, deleteListener,
+               requestId);
 
       synchronized (this) {
          _hasImageListeners = true;
@@ -173,7 +179,7 @@ public final class Downloader_Android_Handler {
 
    void runWithDownloader(final Downloader_Android downloader,
                           final G3MContext context) {
-      //      Log.i(TAG, "runWithDownloader url=" + _url.getPath());
+      //      Log.i(TAG, "runWithDownloader url=" + _url._path);
 
       if (_javaURL == null) {
          return;
@@ -185,7 +191,7 @@ public final class Downloader_Android_Handler {
 
       try {
          if (_g3mURL.isFileProtocol()) {
-            final String filePath = _g3mURL.getPath().replaceFirst(URL.FILE_PROTOCOL, "");
+            final String filePath = _g3mURL._path.replaceFirst(URL.FILE_PROTOCOL, "");
 
             final File file = new File(filePath);
             final InputStream fileIS = file.exists() ? new FileInputStream(file) //
@@ -215,7 +221,7 @@ public final class Downloader_Android_Handler {
          }
       }
       catch (final IOException e) {
-         ILogger.instance().logError(TAG + " runWithDownloader: IOException url=" + _g3mURL.getPath());
+         ILogger.instance().logError(TAG + " runWithDownloader: IOException url=" + _g3mURL._path);
          e.printStackTrace();
       }
       finally {
@@ -225,7 +231,7 @@ public final class Downloader_Android_Handler {
       }
 
       // inform downloader to remove myself, to avoid adding new Listener
-      downloader.removeDownloadingHandlerForUrl(_g3mURL.getPath());
+      downloader.removeDownloadingHandlerForUrl(_g3mURL._path);
 
       final IImage image = (_hasImageListeners && (data != null)) ? decodeImage(data, _g3mURL) : null;
       context.getThreadUtils().invokeInRendererThread(new ProcessResponseGTask(statusCode, data, image), true);
@@ -239,7 +245,7 @@ public final class Downloader_Android_Handler {
       // ILogger.instance().logInfo("DOWNLOADER - onDownload: Bitmap parsed in " + (System.currentTimeMillis() - start) + "ms");
 
       if (bitmap == null) {
-         ILogger.instance().logError("Downloader_Android: Can't create image from data (URL=" + url.getPath() + ")");
+         ILogger.instance().logError("Downloader_Android: Can't create image from data (URL=" + url._path + ")");
          return null;
       }
 
@@ -268,7 +274,7 @@ public final class Downloader_Android_Handler {
          bis.close();
       }
       catch (final IOException e) {
-         ILogger.instance().logError(TAG + " getData: IOException url=" + _g3mURL.getPath());
+         ILogger.instance().logError(TAG + " getData: IOException url=" + _g3mURL._path);
          e.printStackTrace();
       }
 
@@ -276,8 +282,8 @@ public final class Downloader_Android_Handler {
    }
 
    private class ProcessResponseGTask
-            extends
-               GTask {
+      extends
+         GTask {
 
       private final int    _statusCode;
       private final byte[] _data;
@@ -319,7 +325,7 @@ public final class Downloader_Android_Handler {
          }
          else {
             final ILogger logger = ILogger.instance();
-            final String msg = "Error runWithDownloader: statusCode=" + _statusCode + ", url=" + _g3mURL.getPath();
+            final String msg = "Error runWithDownloader: statusCode=" + _statusCode + ", url=" + _g3mURL._path;
             if (logger != null) {
                logger.logError(TAG + " " + msg);
             }

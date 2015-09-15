@@ -37,6 +37,11 @@ public:
     return 1;
   }
 
+  GEO2DPointGeometry* deepCopy() const;
+
+  long long createFeatureMarks(const VectorStreamingRenderer::VectorSet* vectorSet,
+                               const VectorStreamingRenderer::Node*      node) const;
+
 };
 
 #endif

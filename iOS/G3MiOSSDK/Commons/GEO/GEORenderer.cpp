@@ -20,6 +20,8 @@
 #include "MeshRenderer.hpp"
 #include "ShapesRenderer.hpp"
 #include "MarksRenderer.hpp"
+#include "GEOVectorLayer.hpp"
+
 
 class GEORenderer_ObjectSymbolizerPair {
 public:
@@ -44,8 +46,8 @@ public:
 GEORenderer::~GEORenderer() {
   delete _defaultSymbolizer;
 
-  const int childrenCount = _children.size();
-  for (int i = 0; i < childrenCount; i++) {
+  const size_t childrenCount = _children.size();
+  for (size_t i = 0; i < childrenCount; i++) {
     GEORenderer_ObjectSymbolizerPair* pair = _children[i];
     delete pair;
   }
@@ -67,9 +69,9 @@ void GEORenderer::addGEOObject(GEOObject* geoObject,
 }
 
 void GEORenderer::render(const G3MRenderContext* rc, GLState* glState) {
-  const int childrenCount = _children.size();
+  const size_t childrenCount = _children.size();
   if (childrenCount > 0) {
-    for (int i = 0; i < childrenCount; i++) {
+    for (size_t i = 0; i < childrenCount; i++) {
       const GEORenderer_ObjectSymbolizerPair* pair = _children[i];
 
       if (pair->_geoObject != NULL) {
@@ -80,7 +82,7 @@ void GEORenderer::render(const G3MRenderContext* rc, GLState* glState) {
                                     _meshRenderer,
                                     _shapesRenderer,
                                     _marksRenderer,
-                                    _geoTileRasterizer);
+                                    _geoVectorLayer);
       }
 
       delete pair;
@@ -228,8 +230,8 @@ void GEORenderer::requestBuffer(const URL& url,
 }
 
 void GEORenderer::drainLoadQueue() {
-  const int loadQueueSize = _loadQueue.size();
-  for (int i = 0; i < loadQueueSize; i++) {
+  const size_t loadQueueSize = _loadQueue.size();
+  for (size_t i = 0; i < loadQueueSize; i++) {
     LoadQueueItem* item = _loadQueue[i];
     requestBuffer(item->_url,
                   item->_symbolizer,
@@ -244,8 +246,8 @@ void GEORenderer::drainLoadQueue() {
 }
 
 void GEORenderer::cleanLoadQueue() {
-  const int loadQueueSize = _loadQueue.size();
-  for (int i = 0; i < loadQueueSize; i++) {
+  const size_t loadQueueSize = _loadQueue.size();
+  for (size_t i = 0; i < loadQueueSize; i++) {
     LoadQueueItem* item = _loadQueue[i];
     delete item;
   }
@@ -323,7 +325,17 @@ void GEORenderer::setEnable(bool enable) {
   if (_marksRenderer) {
     _marksRenderer->setEnable(enable);
   }
-  if (_geoTileRasterizer) {
-    _geoTileRasterizer->setEnable(enable);
+  if (_geoVectorLayer) {
+    _geoVectorLayer->setEnable(enable);
+  }
+}
+
+void GEORenderer::setGEOVectorLayer(GEOVectorLayer* geoVectorLayer,
+                                    bool deletePrevious) {
+  if (geoVectorLayer != _geoVectorLayer) {
+    if (deletePrevious) {
+      delete _geoVectorLayer;
+    }
+    _geoVectorLayer = geoVectorLayer;
   }
 }

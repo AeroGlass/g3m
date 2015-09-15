@@ -64,11 +64,11 @@ void FloatBuffer_iOS::bindAsVBOToGPU() const {
     _boundVertexBuffer = _vertexBuffer;
   }
 
-  if (_vertexBufferTimeStamp != _timestamp) {
-    _vertexBufferTimeStamp = _timestamp;
+  if (_vertexBufferTimestamp != _timestamp) {
+    _vertexBufferTimestamp = _timestamp;
 
     float* vertices = getPointer();
-    int vboSize = sizeof(float) * size();
+    int vboSize = (int) ( sizeof(float) * size() );
 
     glBufferData(GL_ARRAY_BUFFER, vboSize, vertices, GL_STATIC_DRAW);
   }
@@ -82,7 +82,7 @@ FloatBuffer_iOS::~FloatBuffer_iOS() {
 
     glDeleteBuffers(1, &_vertexBuffer);
     if (GL_NO_ERROR != glGetError()) {
-      ILogger::instance()->logError("Problem deleting VBO");
+      THROW_EXCEPTION("Problem deleting VBO");
     }
 
     if (_vertexBuffer == _boundVertexBuffer) {
@@ -93,4 +93,19 @@ FloatBuffer_iOS::~FloatBuffer_iOS() {
   delete [] _values;
 
   showStatistics();
+}
+
+
+void FloatBuffer_iOS::rawPut(size_t i,
+                             const IFloatBuffer* srcBuffer,
+                             size_t srcFromIndex,
+                             size_t count) {
+  if ((i + count) > _size) {
+    THROW_EXCEPTION("buffer put error");
+  }
+
+  FloatBuffer_iOS* iosSrcBuffer = (FloatBuffer_iOS*) srcBuffer;
+  for (int j = 0; j < count; j++) {
+    _values[i + j] = iosSrcBuffer->_values[srcFromIndex + j];
+  }
 }

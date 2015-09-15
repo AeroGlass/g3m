@@ -10,7 +10,8 @@
 #define __G3MiOSSDK__FloatBuffer_iOS__
 
 #include "IFloatBuffer.hpp"
-#include "ILogger.hpp"
+//#include "ILogger.hpp"
+#include "ErrorHandling.hpp"
 #include <OpenGLES/ES2/gl.h>
 
 class FloatBuffer_iOS : public IFloatBuffer {
@@ -23,9 +24,9 @@ private:
 
   static void showStatistics();
 
-  const int _size;
-  float*    _values;
-  int       _timestamp;
+  const size_t _size;
+  float*       _values;
+  int          _timestamp;
 
   //ID
   const long long _id;
@@ -35,32 +36,27 @@ private:
   static GLuint     _boundVertexBuffer;
   mutable bool      _vertexBufferCreated;
   mutable GLuint    _vertexBuffer; //VBO
-  mutable int       _vertexBufferTimeStamp;
+  mutable int       _vertexBufferTimestamp;
 
 public:
-  FloatBuffer_iOS(int size) :
+  FloatBuffer_iOS(size_t size) :
   _size(size),
   _timestamp(0),
   _values(new float[size]),
   _vertexBuffer(-1),
-  _vertexBufferTimeStamp(-1),
+  _vertexBufferTimestamp(-1),
   _vertexBufferCreated(false),
   _id(_nextID++)
   {
     if (_values == NULL) {
-      ILogger::instance()->logError("Allocating error.");
+      THROW_EXCEPTION("Allocating error.");
     }
 
     _newCounter++;
     showStatistics();
-
-//    if (size == 48 || size == 36) {
-//#warning DGD_At_Work;
-//      printf("break point on me\n");
-//    }
   }
 
-  long long getID() const{
+  long long getID() const {
     return _id;
   }
 
@@ -83,7 +79,7 @@ public:
   _size(16),
   _timestamp(0),
   _vertexBuffer(-1),
-  _vertexBufferTimeStamp(-1),
+  _vertexBufferTimestamp(-1),
   _vertexBufferCreated(false),
   _id(_nextID)
   {
@@ -111,7 +107,7 @@ public:
 
   virtual ~FloatBuffer_iOS();
 
-  int size() const {
+  size_t size() const {
     return _size;
   }
 
@@ -119,18 +115,17 @@ public:
     return _timestamp;
   }
 
-  float get(int i) const {
-    if (i < 0 || i > _size) {
-      ILogger::instance()->logError("Buffer Get error.");
+  float get(size_t i) const {
+    if (i >= _size) {
+      THROW_EXCEPTION("Buffer Overflow");
     }
-
     return _values[i];
   }
 
-  void put(int i,
+  void put(size_t i,
            float value) {
-    if (i < 0 || i > _size) {
-      ILogger::instance()->logError("Buffer Put error.");
+    if (i >= _size) {
+      THROW_EXCEPTION("Buffer Overflow");
     }
 
     if (_values[i] != value) {
@@ -139,20 +134,18 @@ public:
     }
   }
 
-  void rawPut(int i,
+  void rawPut(size_t i,
               float value) {
-    if (i < 0 || i > _size) {
-      ILogger::instance()->logError("Buffer Put error.");
+    if (i >= _size) {
+      THROW_EXCEPTION("Buffer Overflow");
     }
-
     _values[i] = value;
   }
 
-  void rawAdd(int i, float value) {
-    if (i < 0 || i > _size) {
-      ILogger::instance()->logError("Buffer Put error.");
+  void rawAdd(size_t i, float value) {
+    if (i >= _size) {
+      THROW_EXCEPTION("Buffer Overflow");
     }
-
     _values[i] = _values[i] + value;
   }
 
@@ -164,7 +157,12 @@ public:
   const std::string description() const;
   
   void bindAsVBOToGPU() const;
-  
+
+  void rawPut(size_t i,
+              const IFloatBuffer* srcBuffer,
+              size_t srcFromIndex,
+              size_t srcToIndex);
+
 };
 
 #endif

@@ -49,14 +49,14 @@ MeshRenderer::~MeshRenderer() {
 }
 
 void MeshRenderer::updateGLState(const G3MRenderContext* rc) {
-  const Camera* cam = rc->getCurrentCamera();
+  const Camera* camera = rc->getCurrentCamera();
 
   ModelViewGLFeature* f = (ModelViewGLFeature*) _glState->getGLFeature(GLF_MODEL_VIEW);
   if (f == NULL) {
-    _glState->addGLFeature(new ModelViewGLFeature(cam), true);
+    _glState->addGLFeature(new ModelViewGLFeature(camera), true);
   }
   else {
-    f->setMatrix(cam->getModelViewMatrix44D());
+    f->setMatrix(camera->getModelViewMatrix44D());
   }
 }
 
@@ -645,10 +645,13 @@ public:
   void onError(const URL& url) {
     ILogger::instance()->logError("Error downloading \"%s\"", url._path.c_str());
 
+    if (_listener != NULL) {
+      _listener->onError(url);
+    }
+    
     if (_deleteListener) {
       delete _listener;
     }
-    delete _color;
   }
 
   void onCancel(const URL& url) {
@@ -657,7 +660,6 @@ public:
     if (_deleteListener) {
       delete _listener;
     }
-    delete _color;
   }
 
   void onCanceledDownload(const URL& url,
@@ -668,6 +670,7 @@ public:
 
   ~MeshRenderer_MeshBufferDownloadListener() {
     delete _color;
+    _color = NULL;
   }
 
 };
@@ -718,7 +721,7 @@ void MeshRenderer::disableAll() {
   }
 }
 
-void MeshRenderer::showNormals(bool v) const{
+void MeshRenderer::showNormals(bool v) const {
   _showNormals = v;
   const int meshesCount = _meshes.size();
   for (int i = 0; i < meshesCount; i++) {

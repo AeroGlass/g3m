@@ -97,6 +97,13 @@ void ICanvas::removeShadow() {
   _removeShadow();
 }
 
+void ICanvas::clearRect(float left, float top, float width, float height) {
+  checkInitialized();
+  _clearRect(left, top,
+             width, height);
+}
+
+
 void ICanvas::fillRectangle(float left, float top,
                             float width, float height) {
   checkInitialized();
@@ -176,9 +183,25 @@ void ICanvas::drawImage(const IImage* image,
 }
 
 void ICanvas::drawImage(const IImage* image,
+                        float destLeft, float destTop,
+                        float transparency) {
+  checkInitialized();
+  _drawImage(image, destLeft, destTop,
+             transparency);
+}
+
+void ICanvas::drawImage(const IImage* image,
                         float destLeft, float destTop, float destWidth, float destHeight) {
   checkInitialized();
   _drawImage(image, destLeft, destTop, destWidth, destHeight);
+}
+
+void ICanvas::drawImage(const IImage* image,
+                        float destLeft, float destTop, float destWidth, float destHeight,
+                        float transparency)
+{
+  checkInitialized();
+  _drawImage(image, destLeft, destTop, destWidth, destHeight, transparency);
 }
 
 void ICanvas::drawImage(const IImage* image,
@@ -205,22 +228,25 @@ void ICanvas::drawImage(const IImage* image,
   if (!RectangleF::fullContains(0, 0, image->getWidth(), image->getHeight(),
                                 srcLeft, srcTop, srcWidth, srcHeight)) {
     ILogger::instance()->logError("Invalid source rectangle in drawImage");
+  } else {
+    if (transparency <= 0.0) {
+      return;
+    }
+
+    if (transparency >= 1.0) {
+      _drawImage(image,
+                 srcLeft, srcTop, srcWidth, srcHeight,
+                 destLeft, destTop, destWidth, destHeight);
+    }
+    else {
+      _drawImage(image,
+                 srcLeft, srcTop, srcWidth, srcHeight,
+                 destLeft, destTop, destWidth, destHeight,
+                 transparency);
+    }
+
   }
 
-  if (transparency <= 0.0) {
-    return;
-  }
-
-  if (transparency >= 1.0) {
-    _drawImage(image,
-               srcLeft, srcTop, srcWidth, srcHeight,
-               destLeft, destTop, destWidth, destHeight, transparency);
-  } else{
-    _drawImage(image,
-               srcLeft, srcTop, srcWidth, srcHeight,
-               destLeft, destTop, destWidth, destHeight,
-               transparency);
-  }
 
 }
 
@@ -257,4 +283,26 @@ void ICanvas::moveTo(float x, float y) {
 void ICanvas::lineTo(float x, float y) {
   checkInitialized();
   _lineTo(x, y);
+}
+
+
+void ICanvas::fillEllipse(float left, float top,
+                          float width, float height) {
+  checkInitialized();
+  _fillEllipse(left, top,
+               width, height);
+}
+
+void ICanvas::strokeEllipse(float left, float top,
+                            float width, float height) {
+  checkInitialized();
+  _strokeEllipse(left, top,
+                 width, height);
+}
+
+void ICanvas::fillAndStrokeEllipse(float left, float top,
+                                   float width, float height) {
+  checkInitialized();
+  _fillAndStrokeEllipse(left, top,
+                        width, height);
 }

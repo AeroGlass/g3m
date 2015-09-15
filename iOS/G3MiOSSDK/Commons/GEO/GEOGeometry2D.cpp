@@ -17,8 +17,8 @@ void GEOGeometry2D::rasterize(const GEORasterSymbolizer* symbolizer,
 
   std::vector<GEORasterSymbol*>* symbols = createRasterSymbols(symbolizer);
   if (symbols != NULL) {
-    const int symbolsSize = symbols->size();
-    for (int i = 0; i < symbolsSize; i++) {
+    const size_t symbolsSize = symbols->size();
+    for (size_t i = 0; i < symbolsSize; i++) {
       GEORasterSymbol* symbol = symbols->at(i);
       if (symbol != NULL) {
         symbol->rasterize(canvas, projection, tileLevel);
@@ -29,3 +29,9 @@ void GEOGeometry2D::rasterize(const GEORasterSymbolizer* symbolizer,
     delete symbols;
   }
 }
+
+
+bool GEOGeometry2D::contain(const Geodetic2D& point) const {
+  return false;
+}
+

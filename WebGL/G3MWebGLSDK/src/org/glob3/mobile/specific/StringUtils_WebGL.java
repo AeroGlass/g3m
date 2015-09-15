@@ -9,8 +9,8 @@ import org.glob3.mobile.generated.IStringUtils;
 
 
 public final class StringUtils_WebGL
-         extends
-            IStringUtils {
+   extends
+      IStringUtils {
 
    @Override
    public String createString(final byte[] data,
@@ -166,5 +166,20 @@ public final class StringUtils_WebGL
    public double parseDouble(final String str) {
       return Double.parseDouble(str);
    }
+
+
+   @Override
+   public String toString(final float value) {
+      return Float.toString(value);
+   }
+
+
+   @Override
+   public String replaceAll(final String originalString,
+                            final String searchString,
+                            final String replaceString) {
+      return originalString.replace(searchString, replaceString);
+   }
+
 
 }
