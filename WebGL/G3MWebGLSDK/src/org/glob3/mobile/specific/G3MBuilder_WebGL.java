@@ -47,7 +47,7 @@ public class G3MBuilder_WebGL
    protected IDownloader createDefaultDownloader() {
       final int maxConcurrentOperationCount = 8;
       final int delayMillis = 10;
-      return new Downloader_WebGL(maxConcurrentOperationCount, delayMillis, "");
+      return new Downloader_WebGL(maxConcurrentOperationCount, delayMillis, "", true);
    }
 
 
@@ -62,16 +62,6 @@ public class G3MBuilder_WebGL
    protected IStorage createDefaultStorage() {
       // TODO To be implemented when Storage_WebGL is implemented.
       return null;
-   }
-
-
-   @Override
-   protected IDownloader createDefaultDownloader() {
-      final int delayMillis = 10;
-      // enable CORS request by default
-      final IDownloader downloader = new Downloader_WebGL(8, delayMillis, "", true);
-
-      return downloader;
    }
 
 }

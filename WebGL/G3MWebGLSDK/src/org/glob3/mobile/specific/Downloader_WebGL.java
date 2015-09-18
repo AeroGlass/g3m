@@ -184,7 +184,7 @@ public final class Downloader_WebGL
             // new handler, queue it
             //            handler = new Downloader_WebGL_HandlerImpl(proxyUrl, listener, priority, requestId);
             handler = GWT.create(Downloader_WebGL_Handler.class);
-            handler.init(proxyUrl, listener, deleteListener, priority, requestId);
+            handler.init(proxyUrl, listener, deleteListener, priority, requestId, true);
 
             _queuedHandlers.put(proxyUrl, handler);
          }
@@ -239,7 +239,7 @@ public final class Downloader_WebGL
             // new handler, queue it
             //            handler = new Downloader_WebGL_HandlerImpl(proxyUrl, listener, priority, requestId);
             handler = GWT.create(Downloader_WebGL_Handler.class);
-            handler.init(proxyUrl, listener, deleteListener, priority, requestId);
+            handler.init(proxyUrl, listener, deleteListener, priority, requestId, true);
 
             _queuedHandlers.put(proxyUrl, handler);
          }

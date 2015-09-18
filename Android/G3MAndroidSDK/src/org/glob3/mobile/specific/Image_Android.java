@@ -165,7 +165,7 @@ public final class Image_Android
 
    @Override
    public boolean isPremultiplied() {
-      return (_bitmapHolder._bitmap == null) ? false : _bitmapHolder._bitmap.isPremultiplied();
+      return (_bitmapHolder._bitmap == null) ? false : true; // TODO fix this correctly
    }
 
 
